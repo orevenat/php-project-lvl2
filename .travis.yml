@@ -1,0 +1,12 @@
+language: php
+php:
+  - '7.4'
+
+install:
+  - make install
+
+script:
+  - make lint
+
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
