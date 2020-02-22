@@ -1,0 +1,15 @@
+{
+    "name": "orevenat/php-project-lvl2",
+    "description": "Generator difference between files",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ruslan Knyazev",
+            "email": "agrry@yandex.ru"
+        }
+    ],
+    "require": {
+        "docopt/docopt": "^1.0"
+    }
+}
