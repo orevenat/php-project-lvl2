@@ -1,5 +1,8 @@
 {
     "name": "orevenat/php-project-lvl2",
+    "bin": [
+        "bin/gendiff"
+    ],
     "description": "Generator difference between files",
     "type": "project",
     "license": "MIT",
