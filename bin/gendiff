@@ -22,6 +22,5 @@ $params = array('version' => '0.0.2');
 
 $args = Docopt::handle($doc, $params);
 
-foreach ($args as $k => $v) {
-    echo $k.': '.json_encode($v).PHP_EOL;
-}
+$diff = \Differ\genDiff($args['<firstFile>'], $args['<secondFile>']);
+print_r($diff);
