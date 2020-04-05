@@ -1,14 +1,13 @@
 <?php
 
-namespace Differ;
+namespace Differ\Differ;
 
-function genDiff(string $pathToFile1, string $pathToFile2)
+use Symfony\Component\Yaml\Yaml;
+
+function genDiff(string $pathToFileBefore, string $pathToFileAfter)
 {
-    $contentBefore = file_get_contents($pathToFile1);
-    $contentAfter = file_get_contents($pathToFile2);
-
-    $before = json_decode($contentBefore, true);
-    $after = json_decode($contentAfter, true);
+    $before = getParsedContent($pathToFileBefore);
+    $after = getParsedContent($pathToFileAfter);
 
     $allKeys = array_unique(array_merge(array_keys($before), array_keys($after)));
     $astDiff = array_map(function ($key) use ($before, $after) {
@@ -43,6 +42,9 @@ function genDiff(string $pathToFile1, string $pathToFile2)
             case 'added':
                 $res = "  + $key: $value";
                 break;
+            default:
+                throw new \Exception('Undefined status');
+
         }
 
         return $res;
@@ -50,6 +52,24 @@ function genDiff(string $pathToFile1, string $pathToFile2)
 
     $resultDiff = implode("\n", $diff);
     return "{\n$resultDiff\n}";
+}
+
+function getParsedContent($pathToFile)
+{
+    $fileContent = file_get_contents($pathToFile);
+    $extension = pathinfo($pathToFile, PATHINFO_EXTENSION);
+
+    switch ($extension) {
+        case 'json':
+            return json_decode($fileContent, true);
+        break;
+        case 'yml':
+        case 'yaml':
+            return Yaml::parse($fileContent);
+        break;
+        default:
+            throw new \Exception('Undefined extension');
+    }
 }
 
 function convertToString($value)

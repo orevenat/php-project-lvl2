@@ -24,7 +24,8 @@
         "test": "phpunit tests"
     },
     "require": {
-        "docopt/docopt": "^1.0"
+        "docopt/docopt": "^1.0",
+        "symfony/yaml": "^5.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.0",
