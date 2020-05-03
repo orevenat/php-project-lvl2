@@ -30,7 +30,6 @@ function iter($tree, $depth = 1)
                 return "{$nodeIndent}  {$key}: {\n{$children}\n{$indent}}";
             default:
                 throw new \Exception('Undefined status');
-
         }
     }, $tree);
 
@@ -45,8 +44,7 @@ function render($internalTree)
 
 function stringify($value, $depth = null)
 {
-    if (is_bool($value))
-    {
+    if (is_bool($value)) {
         return $value ? 'true' : 'false';
     }
 

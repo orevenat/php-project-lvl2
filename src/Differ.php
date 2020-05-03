@@ -55,7 +55,6 @@ function buildDiff($before, $after)
 
             return buildNode('changed', $key, $beforValue, $afterValue);
         }
-
     }, $allKeys);
 
     return $astDiff;

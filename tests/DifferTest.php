@@ -18,7 +18,7 @@ class DifferTest extends TestCase
     {
         $formats = ['json', 'yml'];
 
-        foreach($formats as $format) {
+        foreach ($formats as $format) {
             $before = getFixturePath("before.$format");
             $after = getFixturePath("after.$format");
             $expected = trim(file_get_contents(getFixturePath("expected.txt")));
@@ -33,7 +33,7 @@ class DifferTest extends TestCase
     {
         $formats = ['json', 'yml'];
 
-        foreach($formats as $format) {
+        foreach ($formats as $format) {
             $before = getFixturePath("before_recursive.$format");
             $after = getFixturePath("after_recursive.$format");
             $expected = trim(file_get_contents(getFixturePath("expected_recursive.txt")));
