@@ -6,20 +6,41 @@ use PHPUnit\Framework\TestCase;
 
 use function Differ\Differ\genDiff;
 
+function getFixturePath($fixtureName)
+{
+    $parts = [__DIR__, 'fixtures', $fixtureName];
+    return realpath(implode(DIRECTORY_SEPARATOR, $parts));
+}
+
 class DifferTest extends TestCase
 {
     public function testPlainJson()
     {
-        $types = ['json', 'yml'];
+        $formats = ['json', 'yml'];
 
-        foreach($types as $type) {
-            $configBefore = __DIR__ . "/fixtures/config_before.$type";
-            $configAfter  = __DIR__ . "/fixtures/config_after.$type";
-            $expected = trim(file_get_contents(__DIR__ . '/fixtures/expected.txt'));
+        foreach($formats as $format) {
+            $before = getFixturePath("before.$format");
+            $after = getFixturePath("after.$format");
+            $expected = trim(file_get_contents(getFixturePath("expected.txt")));
 
-            $result = genDiff($configBefore, $configAfter);
+            $actual = genDiff($before, $after);
 
-            $this->assertEquals($expected, $result);
+            $this->assertEquals($expected, $actual);
+        }
+    }
+
+    public function testRecursiveJson()
+    {
+        $formats = ['json', 'yml'];
+
+        foreach($formats as $format) {
+            $before = getFixturePath("before_recursive.$format");
+            $after = getFixturePath("after_recursive.$format");
+            $expected = trim(file_get_contents(getFixturePath("expected_recursive.txt")));
+
+            $actual = genDiff($before, $after);
+
+            $this->assertEquals($expected, $actual);
         }
     }
 }

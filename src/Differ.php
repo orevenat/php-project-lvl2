@@ -2,81 +2,61 @@
 
 namespace Differ\Differ;
 
-use Symfony\Component\Yaml\Yaml;
+use function Differ\Parser\parse;
+use function Differ\Formatters\render;
+use function Funct\Collection\union;
 
-function genDiff(string $pathToFileBefore, string $pathToFileAfter)
+function genDiff(string $path1, string $path2)
 {
-    $before = getParsedContent($pathToFileBefore);
-    $after = getParsedContent($pathToFileAfter);
+    $data1 = file_get_contents(realpath($path1));
+    $extension1 = pathinfo($path1, PATHINFO_EXTENSION);
+    $parsedData1 = parse($data1, $extension1);
 
-    $allKeys = array_unique(array_merge(array_keys($before), array_keys($after)));
+    $data2 = file_get_contents(realpath($path2));
+    $extension2 = pathinfo($path2, PATHINFO_EXTENSION);
+    $parsedData2 = parse($data2, $extension2);
+
+    $internalTree = buildDiff($parsedData1, $parsedData2);
+    return render($internalTree);
+}
+
+function buildNode($status, $key, $oldValue, $newValue, $children = [])
+{
+    return [
+        'status' => $status,
+        'key' => $key,
+        'oldValue' => $oldValue,
+        'newValue' => $newValue,
+        'children' => $children
+    ];
+}
+
+function buildDiff($before, $after)
+{
+    $beforeKeys = array_keys(get_object_vars($before));
+    $afterKeys = array_keys(get_object_vars($after));
+
+    $allKeys = union($beforeKeys, $afterKeys);
     $astDiff = array_map(function ($key) use ($before, $after) {
-        if (!array_key_exists($key, $before)) {
-            return ['added', $key, convertToString($after[$key]), null];
+        if (!property_exists($after, $key)) {
+            return buildNode('removed', $key, $before->$key, null);
+        } elseif (!property_exists($before, $key)) {
+            return buildNode('added', $key, null, $after->$key);
+        } else {
+            $beforValue = $before->$key;
+            $afterValue = $after->$key;
+
+            if (is_object($beforValue) && is_object($afterValue)) {
+                $children = buildDiff($beforValue, $afterValue);
+                return buildNode('nested', $key, null, null, $children);
+            } elseif ($beforValue === $afterValue) {
+                return buildNode('unchanged', $key, $beforValue, $afterValue);
+            }
+
+            return buildNode('changed', $key, $beforValue, $afterValue);
         }
 
-        if (!array_key_exists($key, $after)) {
-            return ['removed', $key, convertToString($before[$key]), null];
-        }
-
-        if ($before[$key] === $after[$key]) {
-            return ['unchanged', $key, convertToString($before[$key]), null];
-        }
-
-        return ['changed', $key, convertToString($before[$key]), convertToString($after[$key])];
     }, $allKeys);
 
-
-    $diff = array_map(function ($astLine) {
-        [$status, $key, $value, $newValue] = $astLine;
-        switch ($status) {
-            case 'unchanged':
-                $res = "    $key: $value";
-                break;
-            case 'changed':
-                $res = "  + $key: $newValue\n  - $key: $value";
-                break;
-            case 'removed':
-                $res = "  - $key: $value";
-                break;
-            case 'added':
-                $res = "  + $key: $value";
-                break;
-            default:
-                throw new \Exception('Undefined status');
-
-        }
-
-        return $res;
-    }, $astDiff);
-
-    $resultDiff = implode("\n", $diff);
-    return "{\n$resultDiff\n}";
-}
-
-function getParsedContent($pathToFile)
-{
-    $fileContent = file_get_contents($pathToFile);
-    $extension = pathinfo($pathToFile, PATHINFO_EXTENSION);
-
-    switch ($extension) {
-        case 'json':
-            return json_decode($fileContent, true);
-        break;
-        case 'yml':
-        case 'yaml':
-            return Yaml::parse($fileContent);
-        break;
-        default:
-            throw new \Exception('Undefined extension');
-    }
-}
-
-function convertToString($value)
-{
-    if (is_bool($value)) {
-        return $value ? 'true' : 'false';
-    }
-
-    return strval($value);
+    return $astDiff;
 }
