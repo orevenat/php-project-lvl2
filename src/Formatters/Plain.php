@@ -4,11 +4,11 @@ namespace Differ\Formatters\Plain;
 
 function iter($tree, $parentKeys = [])
 {
-    $filtredTree = array_filter($tree, function($node) {
+    $filtredTree = array_filter($tree, function ($node) {
         return $node['type'] != 'unchanged';
     });
 
-    return array_map(function($node) use ($parentKeys) {
+    return array_map(function ($node) use ($parentKeys) {
         $type = $node['type'];
         $key = $node['key'];
         $oldValue = stringify($node['oldValue']);
@@ -19,8 +19,7 @@ function iter($tree, $parentKeys = [])
 
         $message =  "Property '{$fullName}' was";
 
-        switch ($type)
-        {
+        switch ($type) {
             case 'changed':
                 return "{$message} changed. From '{$oldValue}' to '{$newValue}'";
             case 'removed':

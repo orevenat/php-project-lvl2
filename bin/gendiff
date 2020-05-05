@@ -22,5 +22,5 @@ $params = array('version' => '0.0.2');
 
 $args = Docopt::handle($doc, $params);
 
-$diff = \Differ\Differ\genDiff($args['<firstFile>'], $args['<secondFile>']);
+$diff = \Differ\Differ\genDiff($args['<firstFile>'], $args['<secondFile>'], $args['--format']);
 print_r($diff);
