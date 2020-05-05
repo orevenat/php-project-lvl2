@@ -14,7 +14,7 @@ function iter($tree, $parentKeys = [])
         $oldValue = stringify($node['oldValue']);
         $newValue = stringify($node['newValue']);
 
-        $fullPath = [...$parentKeys, $key];
+        $fullPath = array_merge($parentKeys, [$key]);
         $fullName = implode(".", $fullPath);
 
         $message =  "Property '{$fullName}' was";
