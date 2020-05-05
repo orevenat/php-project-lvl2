@@ -6,7 +6,7 @@ use function Differ\Parser\parse;
 use function Differ\Formatters\render;
 use function Funct\Collection\union;
 
-function genDiff(string $path1, string $path2)
+function genDiff(string $path1, string $path2, $format = 'pretty')
 {
     $data1 = file_get_contents(realpath($path1));
     $extension1 = pathinfo($path1, PATHINFO_EXTENSION);
@@ -17,13 +17,13 @@ function genDiff(string $path1, string $path2)
     $parsedData2 = parse($data2, $extension2);
 
     $internalTree = buildDiff($parsedData1, $parsedData2);
-    return render($internalTree);
+    return render($internalTree, $format);
 }
 
-function buildNode($status, $key, $oldValue, $newValue, $children = [])
+function buildNode($type, $key, $oldValue, $newValue, $children = [])
 {
     return [
-        'status' => $status,
+        'type' => $type,
         'key' => $key,
         'oldValue' => $oldValue,
         'newValue' => $newValue,

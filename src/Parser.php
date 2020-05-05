@@ -9,12 +9,10 @@ function parse($data, $format)
     switch ($format) {
         case 'json':
             return json_decode($data);
-        break;
         case 'yml':
         case 'yaml':
             return Yaml::parse($data, Yaml::PARSE_OBJECT_FOR_MAP);
-        break;
         default:
-            throw new \Exception('Undefined extension');
+            throw new \Exception('Undefined format');
     }
 }

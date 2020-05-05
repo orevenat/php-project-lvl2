@@ -14,14 +14,14 @@ function getFixturePath($fixtureName)
 
 class DifferTest extends TestCase
 {
-    public function testPlainJson()
+    public function testPretty()
     {
         $formats = ['json', 'yml'];
 
         foreach ($formats as $format) {
             $before = getFixturePath("before.$format");
             $after = getFixturePath("after.$format");
-            $expected = trim(file_get_contents(getFixturePath("expected.txt")));
+            $expected = trim(file_get_contents(getFixturePath("expected.pretty")));
 
             $actual = genDiff($before, $after);
 
@@ -29,16 +29,16 @@ class DifferTest extends TestCase
         }
     }
 
-    public function testRecursiveJson()
+    public function testPlain()
     {
         $formats = ['json', 'yml'];
 
         foreach ($formats as $format) {
-            $before = getFixturePath("before_recursive.$format");
-            $after = getFixturePath("after_recursive.$format");
-            $expected = trim(file_get_contents(getFixturePath("expected_recursive.txt")));
+            $before = getFixturePath("before.$format");
+            $after = getFixturePath("after.$format");
+            $expected = trim(file_get_contents(getFixturePath("expected.plain")));
 
-            $actual = genDiff($before, $after);
+            $actual = genDiff($before, $after, 'plain');
 
             $this->assertEquals($expected, $actual);
         }
