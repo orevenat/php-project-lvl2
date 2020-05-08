@@ -4,9 +4,7 @@ namespace Differ\Formatters\Plain;
 
 function iter($tree, $parentKeys = [])
 {
-    $filtredTree = array_filter($tree, function ($node) {
-        return $node['type'] != 'unchanged';
-    });
+    $filtredTree = array_filter($tree, fn($node) => $node['type'] != 'unchanged');
 
     return array_map(function ($node) use ($parentKeys) {
         $type = $node['type'];
@@ -17,20 +15,18 @@ function iter($tree, $parentKeys = [])
         $fullPath = array_merge($parentKeys, [$key]);
         $fullName = implode(".", $fullPath);
 
-        $message =  "Property '{$fullName}' was";
-
         switch ($type) {
             case 'changed':
-                return "{$message} changed. From '{$oldValue}' to '{$newValue}'";
+                return sprintf("Property '%s' was changed. From '%s' to '%s'", $fullName, $oldValue, $newValue);
             case 'removed':
-                return "{$message} removed";
+                return sprintf("Property '%s' was removed", $fullName);
             case 'added':
-                return "{$message} added with value: '{$newValue}'";
+                return sprintf("Property '%s' was added with value: '%s'", $fullName, $newValue);
             case 'nested':
                 $children = iter($node['children'], $fullPath);
                 return implode("\n", $children);
             default:
-                throw new \Exception('Undefined type');
+                throw new \Exception("Undefined type: {$type}");
         }
     }, $filtredTree);
 }

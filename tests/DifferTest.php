@@ -14,36 +14,26 @@ function getFixturePath($fixtureName)
 
 class DifferTest extends TestCase
 {
-    public function testPretty()
+    /**
+     * @dataProvider additionProvider
+     */
+    public function testFormat($before, $after, $format, $expected)
     {
-        $before = getFixturePath("before.json");
-        $after = getFixturePath("after.json");
-        $expected = trim(file_get_contents(getFixturePath("expected.pretty")));
+        $before = getFixturePath($before);
+        $after = getFixturePath($after);
+        $expected = trim(file_get_contents(getFixturePath($expected)));
 
-        $actual = genDiff($before, $after);
+        $actual = genDiff($before, $after, $format);
 
         $this->assertEquals($expected, $actual);
     }
 
-    public function testPlain()
+    public function additionProvider()
     {
-        $before = getFixturePath("before.yml");
-        $after = getFixturePath("after.yml");
-        $expected = trim(file_get_contents(getFixturePath("expected.plain")));
-
-        $actual = genDiff($before, $after, 'plain');
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function testJson()
-    {
-        $before = getFixturePath("before.json");
-        $after = getFixturePath("after.json");
-        $expected = trim(file_get_contents(getFixturePath("expected.json")));
-
-        $actual = genDiff($before, $after, 'json');
-
-        $this->assertEquals($expected, $actual);
+        return [
+            'pretty' => ['before.json', 'after.json', 'pretty', 'expected.pretty'],
+            'plain' => ['before.yml', 'after.yml', 'plain', 'expected.plain'],
+            'json' => ['before.json', 'after.json', 'json', 'expected.json']
+        ];
     }
 }

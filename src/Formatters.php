@@ -12,6 +12,6 @@ function render($data, $format)
         case 'pretty':
             return Pretty\render($data);
         default:
-            throw new \Exception('Undefined format');
+            throw new \Exception("Undefined format: {$format}");
     }
 }

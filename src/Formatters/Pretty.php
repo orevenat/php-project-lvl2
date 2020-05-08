@@ -2,7 +2,7 @@
 
 namespace Differ\Formatters\Pretty;
 
-const BASE_INDENT = '    ';
+const BASE_INDENT = ' ';
 
 function render($internalTree)
 {
@@ -12,8 +12,8 @@ function render($internalTree)
 
 function iter($tree, $depth = 1)
 {
-    $indent = str_repeat(BASE_INDENT, $depth);
-    $nodeIndent = substr($indent, 0, strlen($indent) - 2);
+    $indent = str_repeat(BASE_INDENT, $depth * 4);
+    $nodeIndent = str_repeat(BASE_INDENT, ($depth * 4) - 2);
 
     $diff = array_map(function ($node) use ($depth, $indent, $nodeIndent) {
         $type = $node['type'];
@@ -53,8 +53,8 @@ function stringify($value, $depth = null)
     }
 
     $keys = array_keys(get_object_vars($value));
-    $indent = str_repeat(BASE_INDENT, $depth + 1);
-    $bracketIndent = str_repeat(BASE_INDENT, $depth);
+    $indent = str_repeat(BASE_INDENT, ($depth + 1) * 4);
+    $bracketIndent = str_repeat(BASE_INDENT, $depth * 4);
     $list = array_map(function ($key) use ($value, $indent, $depth) {
         $formattedValue = stringify($value->$key, $depth);
         return "{$indent}{$key}: {$formattedValue}";

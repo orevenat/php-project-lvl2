@@ -13,6 +13,6 @@ function parse($data, $format)
         case 'yaml':
             return Yaml::parse($data, Yaml::PARSE_OBJECT_FOR_MAP);
         default:
-            throw new \Exception('Undefined format');
+            throw new \Exception("Undefined format: {$format}");
     }
 }
