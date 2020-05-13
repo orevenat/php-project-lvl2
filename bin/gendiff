@@ -18,7 +18,7 @@ Options:
   --format <fmt>                Report format [default: pretty]
 DOC;
 
-$params = array('version' => '0.9.1');
+$params = ['version' => '1.0.0'];
 
 $args = Docopt::handle($doc, $params);
 
